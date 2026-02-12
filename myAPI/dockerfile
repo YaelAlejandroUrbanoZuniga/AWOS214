@@ -1,0 +1,21 @@
+#importamos la imagen base
+FROM python:3.12-slim
+
+#crear carpera de trabajo en el contenedor
+WORKDIR /app
+
+#copiar requerimientos del proyecto
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+#copiar el proyecto
+COPY ./app ./app
+
+#exponemos el puerto
+EXPOSE 5000
+
+#comandos para ejecutar FastAPI
+CMD ["uvicorn", "app.main:app", "--host","0.0.0.0","--port","5000","--reload"]
+
+
+
