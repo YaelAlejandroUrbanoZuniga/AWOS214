@@ -43,7 +43,11 @@ async def consultaTodos(id:Optional[int]=None):
         return{"mensaje":"usuario no encontrado","usuario": id} 
     else:
         return{"mensaje":"NO SE PROPORCIONO ID"}     
-    
+
+
+
+# ----------------------------------------GET----------------------------------------
+
 @app.get("/v1/usuarios/", tags=['CRUD HTTP'])
 async def leer_usuarios():
     return{
@@ -51,6 +55,10 @@ async def leer_usuarios():
         "total":len(usuarios),
         "usuarios":usuarios
     }
+
+
+
+# ----------------------------------------POST----------------------------------------
 
 @app.post("/v1/usuarios/", tags=['CRUD HTTP'],status_code=status.HTTP_201_CREATED)
 async def crear_usuario(usuario:dict):
@@ -68,19 +76,34 @@ async def crear_usuario(usuario:dict):
 
 
 
+# ----------------------------------------PUT----------------------------------------
 
-
-
-
-
-@app.put("/v1/usuarios/{id}", tags=['CRUD HTTP'], status_code=status.HTTP_204_NO_CONTENT)
+@app.put("/v1/usuarios/{id}", tags=['CRUD HTTP'], status_code=status.HTTP_200_OK)
 async def actualizar_usuario(id:int, usuario:dict):
     for usr in usuarios:
         if usr["id"] == id:
             usr.update(usuario)
             return{
                 "mensaje":"Usuario Actualizado",
-                "Usuario":usuario
+                "Usuario":usr
+            }
+    raise HTTPException(
+        status_code=400,
+        detail="El ID no existe"
+    )
+
+
+
+# ----------------------------------------DELETE----------------------------------------
+
+@app.delete("/v1/usuarios/{id}", tags=['CRUD HTTP'], status_code=status.HTTP_200_OK)
+async def actualizar_usuario(id:int):
+    for usr in usuarios:
+        if usr["id"] == id:
+            usuarios.remove(usr)
+            return{
+                "mensaje":"Usuario Borrado",
+                "Usuario":usr
             }
     raise HTTPException(
         status_code=400,
