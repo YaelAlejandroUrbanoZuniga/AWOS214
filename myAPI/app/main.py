@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 import secrets
 
+from fastapi.middleware.cors import CORSMiddleware
 
 # ---------------------------------INSTANCIA DEL SERVIDOR----------------------------------
 app = FastAPI(
@@ -23,7 +24,17 @@ usuarios=[
     {"id":3,"nombre":"Abdiel","edad":19},
 ]
 
+origins = [
+    "http://localhost:19006",
+]
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # ----------------------------------MODELO DE VALIDACIÓN-----------------------------------
 class usuario_create(BaseModel):

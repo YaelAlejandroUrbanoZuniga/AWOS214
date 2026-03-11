@@ -7,10 +7,11 @@ import {
     FlatList,
     StyleSheet,
     Alert,
-    ActivityIndicator
+    ActivityIndicator,
+    Platform
 } from 'react-native';
 
-const API_URL = "http://10.16.34.249:5000/v1/usuarios";
+const API_URL = Platform.OS === "web" ? "http://localhost:5000/v1/usuarios" : "http://10.16.34.249:5000/v1/usuarios";
 
 class UsuarioController {
 
@@ -43,14 +44,18 @@ class UsuarioController {
 
         const response = await fetch(API_URL, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(nuevoUsuario)
         });
 
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.detail || "Error al crear usuario");
+        }
+
         this.notify();
-        return await response.json();
+        return data;
     }
 
     async actualizarUsuario(id, nombre, edad) {
@@ -124,22 +129,28 @@ export default function UsuarioView() {
             return;
         }
 
-        if (editing) {
+        try {
 
-            await controller.actualizarUsuario(id, nombre, edad);
-            Alert.alert("Actualizado", "Usuario actualizado");
+            if (editing) {
+                await controller.actualizarUsuario(id, nombre, edad);
+                Alert.alert("Actualizado", "Usuario actualizado");
+            } else {
+                await controller.crearUsuario(id, nombre, edad);
+                Alert.alert("Creado", "Usuario agregado");
+            }
 
-        } else {
+            setId('');
+            setNombre('');
+            setEdad('');
+            setEditing(false);
 
-            await controller.crearUsuario(id, nombre, edad);
-            Alert.alert("Creado", "Usuario agregado");
-
+        } catch (error) {
+            if (error?.message) {
+                Alert.alert("Error", error.message);
+            } else {
+                Alert.alert("Error", "Ocurrió un error desconocido");
+            }
         }
-
-        setId('');
-        setNombre('');
-        setEdad('');
-        setEditing(false);
 
     };
 
