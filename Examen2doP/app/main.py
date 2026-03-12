@@ -2,8 +2,6 @@
 
 from fastapi import FastAPI, status, HTTPException, Depends
 
-import asyncio
-
 from typing import Optional
 
 from pydantic import BaseModel, Field
@@ -22,7 +20,7 @@ app = FastAPI(
     )
 
 tickets = [
-    {"id":1, "usuario":"Fidel", "descripcion":"Al querer realizar mi Examen del Segundo Parcial, no se me abrió el ChatGPT", "prioridad":"Baja", "estado":"Pendiente"}
+    {"id":1, "usuario":"Fidel", "descripción":"Al querer realizar mi Examen del Segundo Parcial, no se me abrió el ChatGPT", "prioridad":"Baja", "estado":"Pendiente"}
 ]
 
 
@@ -44,7 +42,7 @@ def verificar_Peticion(credenciales:HTTPBasicCredentials = Depends(security)):
 class ticket_create(BaseModel):
     id: int = Field(..., gt = 0, description = "Identificador único del ticket")
     usuario: str = Field(..., min_length = 5, max_length = 50, example = "Fidel")
-    descripcion: str = Field(..., min_length = 20, max_length = 200, example = "Cuando hice mi examen de cálculo con la calculadora, todas las respuestas me dieron SINTAX ERROR")
+    descripción: str = Field(..., min_length = 20, max_length = 200, example = "Cuando hice mi examen de cálculo con la calculadora, todas las respuestas me dieron SINTAX ERROR")
     prioridad: str = Field(..., pattern = "^(Baja|Media|Alta)$", example = "Baja")
     estado: str = Field(..., pattern = "^(Pendiente|Resuelto)$", example = "Pendiente")
 
@@ -56,15 +54,15 @@ class ticket_create(BaseModel):
 @app.post("/v1/Crear_Ticket/", tags=['EndPoints'],status_code=status.HTTP_201_CREATED)
 async def crear_ticket(ticket: ticket_create):
     for tck in tickets:
-        if tck["id"] == ticket.get("id"):
+        if tck["id"] == ticket.id:
             raise HTTPException(
                 status_code=400,
                 detail="El ID ya existe"
             )
-    tickets.append(ticket.dict)
+    tickets.append(ticket.dict())
     return{
         "mensaje":"Ticket Creado",
-        "Ticket":ticket
+        "Ticket":ticket.dict()
     }
 
 # --- LISTAR
@@ -73,7 +71,7 @@ async def listar_tickets():
     return{
         "status":"200",
         "Total":len(tickets),
-        "Libros":tickets
+        "Tickets":tickets
     }
 
 # --- CONSULTAR x ID
@@ -88,11 +86,11 @@ async def consultar_ticket(id:int, userAuth:str = Depends(verificar_Peticion)):
                     "Ticket": cid
                 }
         return {
-                "Mensaje: Ticket no encontrado"
+                "Mensaje": "Ticket no encontrado"
             }
     else:
         return {
-            "Mensaje:" "NO SE PROPORCIONO ID"
+            "Mensaje": "NO SE PROPORCIONO ID"
         }
 
 
@@ -107,10 +105,11 @@ async def cambiar_estado(id: int, estado: str, userAuth:str = Depends(verificar_
                 "Mensaje": "Estado cambiado correctamente",
                 "Mensaje": f"Estado Cambiado Por: {userAuth}",
             }
-    raise HTTPException(
-        status_code=409,
-        detail="El ID no existe"
-    )
+    if estado not in ["Pendiente", "Resuelto"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Estado inválido"
+        )
 
 # --- ELIMINAR TICKET
 @app.delete("/v1/Eliminar_Ticket/{id}", tags=['EndPoints'])
