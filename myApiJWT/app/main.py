@@ -11,15 +11,15 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, AP
 
 # ---------------------------------INSTANCIA DEL SERVIDOR----------------------------------
 app = FastAPI(
-    title='¡API w/ JWT!',
-    description='Urbano Zuñiga Yael Alejandro',
+    title='¡Seguridad Informática | API!',
+    description='Sierra Martinez Andre Alexander\n\nUrbano Zuñiga Yael Alejandro',
     version='1.0.0'
     )
 
 usuarios=[
-    {"id":1,"nombre":"Fidel","edad":21,"username":"fidel","password":"123456","rol":"admin"},
-    {"id":2,"nombre":"Israel","edad":19,"username":"israel","password":"123456","rol":"usuario"},
-    {"id":3,"nombre":"Abdiel","edad":19,"username":"abdiel","password":"123456","rol":"usuario"},
+    {"id":1,"nombre":"Yayo","edad":20,"username":"yayo","password":"123456","rol":"admin"},
+    {"id":2,"nombre":"Andre","edad":20,"username":"andre","password":"123456","rol":"usuario"},
+    {"id":3,"nombre":"Alejandro","edad":19,"username":"alejandro","password":"123456","rol":"usuario"},
 ]
 
 
