@@ -13,7 +13,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://admin:123456@postgres:5432/DB_miapi
+      DATABASE_URL: postgresql+psycopg2://admin:123456@postgres:5432/DB_miapi
 
   postgres:
     image: postgres:15
@@ -24,7 +24,7 @@ services:
       POSTGRES_PASSWORD: 123456
       POSTGRES_DB: DB_miapi
     ports:
-      - "5434:5432"
+      - "5435:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 

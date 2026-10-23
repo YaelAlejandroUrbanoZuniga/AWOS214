@@ -5,7 +5,7 @@ import os
 #1. DEFINIR LA URL DE LA BD
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://admin:123456@postgres:5432/DB_miapi"
+    "postgresql+psycopg2://admin:123456@postgres:5432/DB_miapi"
 )
 
 #2. CREAMOS EL MOTOR DE LA CONEXIÓN
