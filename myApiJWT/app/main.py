@@ -2,6 +2,7 @@
 from fastapi import FastAPI, status, HTTPException, Depends, Request
 from typing import Optional
 import time
+import os
 from pydantic import BaseModel, Field
 
 from datetime import datetime, timedelta, timezone
@@ -51,7 +52,9 @@ def usuario_publico(usr:dict):
 
 
 # -----------------------------------CONFIGURACIÓN JWT------------------------------------
-SECRET_KEY = "ContraseñaExtrema"
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise RuntimeError("Falta la variable de entorno SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -89,7 +92,9 @@ async def obtener_usuario_actual(token: str = Depends(oauth2_scheme)):
 
 
 # -----------------------------------CONFIGURACIÓN API KEY------------------------------------
-API_KEY = "LlaveSecretaAPI"
+API_KEY = os.getenv("API_KEY")
+if not API_KEY:
+    raise RuntimeError("Falta la variable de entorno API_KEY")
 
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 
